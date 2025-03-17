@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.jjjshop.front.mapper.user.UserCartMapper">
+    <select id="getAll" parameterType="java.lang.Integer" resultType="net.jjjshop.front.vo.product.ProductCartVo">
+        SELECT cart.*,sku.product_price,sku.stock_num,sku.spec_sku_id,product.*
+        FROM ${prefix}user_cart AS cart
+                 LEFT JOIN ${prefix}product product
+                           ON cart.product_id = product.product_id
+                 LEFT JOIN ${prefix}product_sku sku
+                           ON cart.product_id = sku.product_id and cart.spec_sku_id = sku.spec_sku_id
+        WHERE cart.user_id = #{userId}
+        ORDER BY cart.create_time desc
+    </select>
+</mapper>

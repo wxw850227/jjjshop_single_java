@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.jjjshop.common.mapper.user.UserBalanceLogMapper">
+    <select id="getList" resultType="net.jjjshop.common.vo.user.UserBalanceLogVo">
+        SELECT user.nickName,user.avatarUrl,log.user_id,log.scene,log.money,log.describe,log.remark,log.create_time
+        FROM ${prefix}user_balance_log log
+        LEFT JOIN ${prefix}user user
+        ON user.user_id = log.user_id
+        <where>
+            <if test="nickName != null" >
+                AND user.nickName LIKE #{nickName}
+            </if>
+            <if test="scene != null" >
+                AND log.scene = ${scene}
+            </if>
+            <if test="startDate!= null" >
+                AND log.create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null" >
+                AND log.create_time &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY log.create_time DESC
+        LIMIT ${pageIndex},${pageSize}
+    </select>
+</mapper>

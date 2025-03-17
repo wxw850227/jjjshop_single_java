@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.jjjshop.shop.mapper.statistics.ProductRankingMapper">
+
+    <select id="getSaleRanking" resultType="net.jjjshop.shop.vo.statistics.ProductSaleRankingVo">
+        SELECT op.product_id,op.product_name,SUM(op.total_num) AS total_num
+        FROM ${prefix}order_product AS op
+        LEFT JOIN ${prefix}order o
+        ON o.order_id=op.order_id
+        WHERE o.pay_status = 20 AND o.order_status != 20
+        GROUP BY op.product_id,op.product_name
+        HAVING total_num>0
+        ORDER BY total_num desc
+        LIMIT 0,10
+    </select>
+
+    <select id="getRefundRanking" resultType="net.jjjshop.shop.vo.statistics.ProductRefundRankingVo">
+        SELECT op.product_name,op.product_id,count(op.product_id) AS refund_count
+        FROM ${prefix}order_refund ore
+        JOIN ${prefix}order_product op
+        ON op.order_product_id=ore.order_product_id
+        GROUP BY op.product_id,op.product_name
+        HAVING refund_count>0
+        ORDER BY refund_count DESC
+        LIMIT 0,10
+    </select>
+</mapper>

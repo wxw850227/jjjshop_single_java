@@ -1,0 +1,782 @@
+<template>
+	<view :data-theme='theme()' :class="theme() || ''" class="login-container" :style="'height: '+phoneHeight+'px;'">
+		<view class="skip" @click="gotoPage('/pages/index/index')">跳过→</view>
+		<view class="p-30-75" v-if="is_login==2">
+			<view class="login_topbpx">
+				<view class="login_tit">注册</view>
+				<view class="login_top">已有账户，<text class="dominant" @click="is_login=1">立即登录</text></view>
+			</view>
+			<view class="group-bd">
+				<view class="form-level d-s-c">
+
+					<view class="val flex-1 input_botom"><input type="text" v-model="register.mobile"
+							placeholder="请填写手机号" :disabled="is_send" /></view>
+				</view>
+				<view class="form-level d-s-c">
+					<view class="val flex-1 input_botom"><input type="text" password="true" v-model="register.password"
+							placeholder="请输入密码" /></view>
+				</view>
+				<view class="form-level d-s-c">
+					<view class="val flex-1 input_botom"><input type="text" password="true"
+							v-model="register.repassword" placeholder="请确认密码" /></view>
+				</view>
+				<view class="form-level d-s-c">
+					<view class="val flex-1 d-b-c input_botom">
+						<input class="flex-1" type="number" v-model="register.code" placeholder="请填写验证码" />
+						<button class="get-code-btn" type="default" @click="sendCode"
+							:disabled="is_send">{{ send_btn_txt }}</button>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view class="p-30-75" v-if="is_login==1">
+			<view class="login_topbpx">
+				<view class="login_tit">登录</view>
+				<view class="login_top">还没有账号，<text class="dominant" @click="is_login=2">立即注册</text></view>
+			</view>
+			<view class="group-bd">
+				<view class="form-level d-s-c">
+					<view class="val flex-1 input_botom"><input type="text" v-model="formData.mobile"
+							placeholder="请填写手机号" /></view>
+				</view>
+				<view class="form-level d-s-c" v-if="!is_code">
+					<view class="val flex-1 input_botom"><input type="text" password="true" v-model="loging_password"
+							placeholder="请输入密码" /></view>
+				</view>
+				<view class="form-level d-s-c" v-if="is_code">
+					<view class="val flex-1 d-b-c input_botom">
+						<input class="flex-1" type="number" v-model="formData.code" placeholder="请填写验证码" />
+						<button class="get-code-btn" type="default" @click="sendCode"
+							:disabled="is_send">{{ send_btn_txt }}</button>
+					</view>
+				</view>
+
+			</view>
+		</view>
+		<view class="p-30-75" v-if="is_login==0">
+			<view class="login_topbpx">
+				<view class="login_tit">重置密码</view>
+				<view class="login_top"><text class="dominant" @click="is_login=1">立即登录</text></view>
+			</view>
+			<view class="group-bd">
+				<view class="form-level d-s-c">
+					<view class="val flex-1 input_botom"><input type="text" v-model="resetpassword.mobile"
+							placeholder="请填写手机号" :disabled="is_send" /></view>
+				</view>
+				<view class="form-level d-s-c">
+					<view class="val flex-1 input_botom"><input type="text" password="true"
+							v-model="resetpassword.password" placeholder="请输入密码" /></view>
+				</view>
+				<view class="form-level d-s-c">
+					<view class="val flex-1 input_botom"><input type="text" password="true"
+							v-model="resetpassword.repassword" placeholder="请确认密码" /></view>
+				</view>
+				<view class="form-level d-s-c">
+					<view class="val flex-1 d-b-c input_botom">
+						<input class="flex-1" type="number" v-model="resetpassword.code" placeholder="请填写验证码" />
+						<button class="get-code-btn" type="default" @click="sendCode"
+							:disabled="is_send">{{ send_btn_txt }}</button>
+					</view>
+				</view>
+			</view>
+		</view>
+		<view v-if="is_login==1" class=" gray6 p-0-75" :class="is_code?'d-e-c':'d-b-c'">
+			<view v-if="!is_code" @click="is_login=0">忘记密码?</view>
+			<view @click="isCode()">{{is_code?'使用密码登录':'使用验证码登录'}}</view>
+		</view>
+		<view @click="isRead=!isRead" class="d-s-c gray6 p-0-75 mt20">
+			<view :class="isRead?'active agreement':'agreement'"></view>我已阅读并接受<text class="dominant" @click.stop="xieyi('service')">《用户协议》</text>和<text
+				class="dominant" @click.stop="xieyi('privacy')">《隐私政策》</text>
+		</view>
+		<view style="padding-top: 80rpx;" class="btns p-30-75" v-if="is_login==2"><button
+				@click="registerSub">注册</button></view>
+		<view style="padding-top: 80rpx;" class="btns p-30-75" v-if="is_login==1"><button
+				@click="formSubmit">登录</button></view>
+		<view style="padding-top: 80rpx;" class="btns p-30-75" v-if="is_login==0"><button
+				@click="resetpasswordSub">重置密码</button></view>
+		<view class="bottom_nav" v-if="is_login==1">
+			<view class="bottom-box">
+				<view class="other_tit"><text class="bg-white p-0-20">其他方式登录</text></view>
+				<view class="pt30 d-c-c" v-if="showWeixin">
+					<view class="weixin_box" @tap="login"><text class="icon iconfont icon-weixin"></text></view>
+				</view>
+				<view v-if="showApple">
+					<image @tap="appleLogin" class="ios-login" src="/static/ios.png" mode="aspectFill"></image>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				/*表单数据对象*/
+				formData: {
+					/*手机号*/
+					mobile: '',
+					/*验证码*/
+					code: '',
+				},
+				loging_password: '',
+				register: {
+					mobile: '',
+					password: '',
+					repassword: '',
+					code: ''
+				},
+				resetpassword: {
+					mobile: '',
+					password: '',
+					repassword: '',
+					code: ''
+				},
+				/*是否已发验证码*/
+				is_send: false,
+				/*发送按钮文本*/
+				send_btn_txt: '获取验证码',
+				/*当前秒数*/
+				second: 60,
+				ip: '',
+				isShow: true,
+				is_login: 1,
+				is_code: false,
+				phoneHeight: 0,
+				isRead: false,
+				showWeixin: false,
+				showApple: false
+			};
+		},
+		onShow() {
+			this.init()
+		},
+		onLoad(){
+			this.getData();
+		},
+		methods: {
+			/*初始化*/
+			init() {
+				let self = this;
+				uni.getSystemInfo({
+					success(res) {
+						self.phoneHeight = res.windowHeight;
+					}
+				});
+				// 是否安装了微信
+				if (plus.runtime.isApplicationExist({ pname: 'com.tencent.mm', action: 'weixin://' })) {
+					self.showWeixin = true;
+				} 
+				// 是否ios13以上
+				uni.getSystemInfo({
+					success: (res)=> {
+						let version = res.system.replace(/iOS /, "");
+						if(res.platform == "ios" &&  version >= 13){
+							self.showApple = true;
+						}
+					}
+				});
+			},
+			getData(){
+				let self = this;
+				self._get('index/policy', {}, function(res) {
+					self.service = res.data.service;
+					self.privacy = res.data.privacy;
+				});
+			},
+			/*提交*/
+			formSubmit() {
+				let self = this;
+				let formdata = {
+					mobile: self.formData.mobile,
+				}
+				let url = ''
+				if (!self.isRead) {
+					uni.showToast({
+						title: '请同意并勾选协议内容',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(self.formData.mobile)) {
+					console.log(self.formData.mobile)
+					uni.showToast({
+						title: '手机有误,请重填！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (self.is_code) {
+					console.log(self.is_code)
+					if (self.formData.code == '') {
+						uni.showToast({
+							title: '验证码不能为空！',
+							duration: 2000,
+							icon: 'none'
+						});
+						return;
+					}
+					formdata.code = self.formData.code;
+					url = 'user/userOpen/smslogin'
+				} else {
+					if (self.loging_password == '') {
+						uni.showToast({
+							title: '密码不能为空！',
+							duration: 2000,
+							icon: 'none'
+						});
+						return;
+					}
+					formdata.password = self.loging_password;
+					url = 'user/userOpen/phoneLogin'
+				}
+
+				uni.showLoading({
+					title: '正在提交'
+				});
+				self._post(
+					url,
+					formdata,
+					result => {
+						// 记录token userId
+						uni.setStorageSync('token', result.data.token);
+						uni.setStorageSync('userId', result.data.userId);
+						// 获取登录前页面
+						let url = uni.getStorageSync('currentPage');
+						let pageOptions = uni.getStorageSync('currentPageOptions');
+						if (Object.keys(pageOptions).length > 0) {
+							url += '?';
+							for (let i in pageOptions) {
+								url += i + '=' + pageOptions[i] + '&';
+							}
+							url = url.substring(0, url.length - 1);
+						}
+						self.gotoPage(url);
+					},
+					false,
+					() => {
+						uni.hideLoading();
+					}
+				);
+			},
+			/*注册*/
+			registerSub() {
+				let self = this;
+				if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(self.register.mobile)) {
+					console.log(self.register.mobile)
+					uni.showToast({
+						title: '手机有误,请重填！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (self.register.code == '') {
+					uni.showToast({
+						title: '验证码不能为空！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (self.register.password.length < 6) {
+					uni.showToast({
+						title: '密码至少6位数！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (self.register.password !== self.register.repassword) {
+					uni.showToast({
+						title: '两次密码输入不一致！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (!self.isRead) {
+					uni.showToast({
+						title: '请同意并勾选协议内容',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				self.register.invitationId = uni.getStorageSync('invitationId') ? uni.getStorageSync('invitationId') :
+					0;
+				self.register.reg_source = 'app';
+				self.register.refereeId = uni.getStorageSync('refereeId');
+				uni.showLoading({
+					title: '正在提交'
+				});
+				self._postBody('user/userOpen/register',
+					self.register,
+					result => {
+						uni.showToast({
+							title: '注册成功',
+							duration: 3000
+						})
+						self.formData.mobile = self.register.mobile;
+						self.register = {
+							mobile: '',
+							password: '',
+							repassword: '',
+							code: ''
+						};
+						self.second = 0;
+						self.changeMsg();
+						self.is_login = 1;
+					},
+					false,
+					() => {
+						uni.hideLoading();
+					}
+				);
+			},
+			resetpasswordSub() {
+				let self = this;
+				if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(self.resetpassword.mobile)) {
+					uni.showToast({
+						title: '手机有误,请重填！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (self.resetpassword.code == '') {
+					uni.showToast({
+						title: '验证码不能为空！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (self.resetpassword.password.length < 6) {
+					uni.showToast({
+						title: '密码至少6位数！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+				if (self.resetpassword.password !== self.resetpassword.repassword) {
+					uni.showToast({
+						title: '两次密码输入不一致！',
+						duration: 2000,
+						icon: 'none'
+					});
+					return;
+				}
+
+				uni.showLoading({
+					title: '正在提交'
+				});
+				self._post(
+					'user/userOpen/resetpassword',
+					self.resetpassword,
+					result => {
+						uni.showToast({
+							title: '重置成功',
+							duration: 3000
+						})
+						self.formData.mobile = self.resetpassword.mobile;
+						self.resetpassword = {
+							mobile: '',
+							password: '',
+							repassword: '',
+							code: ''
+						};
+						self.second = 0;
+						self.changeMsg();
+						self.is_login = 1;
+					},
+					false,
+					() => {
+						uni.hideLoading();
+					}
+				);
+			},
+			isCode() {
+				if (this.is_code) {
+          this.is_code = false;
+				} else {
+          this.is_code = true;
+				}
+
+				console.log(this.is_code)
+			},
+			/*发送短信*/
+			sendCode() {
+				let self = this;
+				if (self.is_login == 1) {
+					if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(self.formData.mobile)) {
+						uni.showToast({
+							title: '手机有误,请重填！',
+							duration: 2000,
+							icon: 'none'
+						});
+						return;
+					}
+				} else if (self.is_login == 2) {
+					if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(self.register.mobile)) {
+						uni.showToast({
+							title: '手机有误,请重填！',
+							duration: 2000,
+							icon: 'none'
+						});
+						return;
+					}
+				} else if (self.is_login == 0) {
+					if (!/^1(3|4|5|6|7|8|9)\d{9}$/.test(self.resetpassword.mobile)) {
+						uni.showToast({
+							title: '手机有误,请重填！',
+							duration: 2000,
+							icon: 'none'
+						});
+						return;
+					}
+				}
+
+				let type = 'register'
+				let mobile = self.register.mobile
+				if (self.is_login == 1) {
+					type = 'login';
+					mobile = self.formData.mobile;
+				} else if (self.is_login == 0) {
+					type = 'login';
+					mobile = self.resetpassword.mobile;
+				}
+				self._post(
+					'user/userOpen/sendCode', {
+						mobile: mobile,
+						type: type
+					},
+					result => {
+						uni.showToast({
+							title: '发送成功'
+						});
+						self.is_send = true;
+						self.changeMsg();
+					}
+				);
+			},
+			login() {
+				let self = this;
+				plus.oauth.getServices(function(servies) {
+					let s = servies[0]
+					if (!s.authResult) {
+						s.authorize(function(e) {
+							uni.showLoading({
+								title: '登录中',
+								mask: true
+							});
+							console.log(e.code);
+							self._post('user/userOpen/login', {
+								code: e.code
+							}, result => {
+								console.log(result);
+								// 记录token userId
+								uni.setStorageSync('token', result.data.token);
+								uni.setStorageSync('userId', result.data.loginUserVo.userId);
+								// 获取登录前页面
+								let url = uni.getStorageSync('currentPage');
+								let pageOptions = uni.getStorageSync('currentPageOptions');
+								if (Object.keys(pageOptions).length > 0) {
+									url += '?';
+									for (let i in pageOptions) {
+										url += i + '=' + pageOptions[i] + '&';
+									}
+									url = url.substring(0, url.length - 1);
+								}
+								self.gotoPage(url);
+							}, false, () => {
+								uni.hideLoading();
+							});
+						}, function(e) {
+							console.log('登陆认证失败!');
+							uni.showModal({
+								title: '认证失败1',
+								content: JSON.stringify(e),
+							});
+						});
+					} else {
+						console.log('已经登陆认证');
+					}
+				}, function(e) {
+					console.log("获取服务列表失败：" + JSON.stringify(e));
+				})
+			},
+			/*改变发送验证码按钮文本*/
+			changeMsg() {
+				if (this.second > 0) {
+					this.send_btn_txt = this.second + '秒';
+					this.second--;
+					setTimeout(this.changeMsg, 1000);
+				} else {
+					this.send_btn_txt = '获取验证码';
+					this.second = 60;
+					this.is_send = false;
+				}
+			},
+			xieyi(type) {
+				let url = '';
+				if(type == 'service'){
+					url = this.service;
+				}else{
+					url = this.privacy;
+				}
+				uni.navigateTo({
+					url: '/pages/webview/webview?url=' + url
+				});
+			},
+			appleLogin(){
+				let self = this;
+				uni.login({  
+				    provider: 'apple',  
+				    success: function (loginRes) {  
+				        // 登录成功  
+				        uni.getUserInfo({  
+				            provider: 'apple',  
+				            success(res) {  
+				                if (res.errMsg !== 'getUserInfo:ok') {
+				                	return false;
+				                }
+								uni.showLoading({
+									title: "正在登录",
+									mask: true
+								});
+								self._postBody('user/userapple/login', {
+									invitationId: self.invitationId,
+									openId: res.userInfo.openId,
+									nickName: res.userInfo.fullName.giveName?res.userInfo.fullName.giveName:'',
+									refereeId: uni.getStorageSync('refereeId'),
+									source: 'apple'
+								}, result => {
+									// 记录token userId
+									uni.setStorageSync('token', result.data.token);
+									uni.setStorageSync('userId', result.data.userId);
+									// 执行回调函数
+									uni.navigateBack();
+								}, false, () => {
+									uni.hideLoading();
+								});
+				            }  
+				        })  
+				    },  
+				    fail: function (err) {  
+				        // 登录失败  
+						console.log('登录失败');
+						console.log(err);
+				    }  
+				});  
+			},
+		}
+	};
+</script>
+
+<style lang="scss" scoped>
+	.p-30-75 {
+		padding: 30rpx 75rpx;
+	}
+
+	.p-0-75 {
+		padding: 0 75rpx;
+	}
+
+	.t-r {
+		text-align: right;
+	}
+
+	.login-container {
+		background: #ffffff;
+	}
+
+	.login-container input {
+		height: 88rpx;
+		line-height: 88rpx;
+	}
+
+	.wechatapp {
+		padding: 80rpx 0 48rpx;
+		border-bottom: 1rpx solid #e3e3e3;
+		margin-bottom: 72rpx;
+		text-align: center;
+	}
+
+	.wechatapp .header {
+		width: 190rpx;
+		height: 190rpx;
+		border: 2px solid #fff;
+		margin: 0rpx auto 0;
+		border-radius: 50%;
+		overflow: hidden;
+		box-shadow: 1px 0px 5px rgba(50, 50, 50, 0.3);
+	}
+
+	.auth-title {
+		color: #585858;
+		font-size: 34rpx;
+		margin-bottom: 40rpx;
+	}
+
+	.auth-subtitle {
+		color: #888;
+		margin-bottom: 88rpx;
+		font-size: 28rpx;
+	}
+
+	.login-btn {
+		padding: 0 20rpx;
+	}
+
+	.login-btn button {
+		height: 88rpx;
+		line-height: 88rpx;
+		background: #04be01;
+		color: #fff;
+		font-size: 30rpx;
+		border-radius: 999rpx;
+		text-align: center;
+	}
+
+	.no-login-btn {
+		margin-top: 20rpx;
+		padding: 0 20rpx;
+	}
+
+	.no-login-btn button {
+		height: 88rpx;
+		line-height: 88rpx;
+		background: #dfdfdf;
+		color: #fff;
+		font-size: 30rpx;
+		border-radius: 999rpx;
+		text-align: center;
+	}
+
+	.get-code-btn {
+		width: 200rpx;
+		height: 80rpx;
+		line-height: 76rpx;
+		padding: 0rpx 30rpx;
+		border-radius: 40rpx;
+		white-space: nowrap;
+		// border: 1rpx solid $dominant-color;
+		background-color: #FFFFFF;
+		@include font_color('font_color');
+		font-size: 30rpx;
+	}
+
+	.get-code-btn[disabled='true'] {
+		// border: 1rpx solid #cccccc;
+		@include font_color('gray9');
+		background-color: #FFFFFF;
+	}
+
+	.btns button {
+		height: 90rpx;
+		line-height: 90rpx;
+		font-size: 34rpx;
+		border-radius: 45rpx;
+		// background-color: $dominant-color;
+		@include background_color('background_color');
+		color: #ffffff;
+	}
+
+	.login_topbpx {
+		padding: 90rpx 0;
+		padding-bottom: 110rpx;
+	}
+
+	.login_tit {
+		font-size: 52rpx;
+		font-weight: 600;
+		margin-bottom: 33rpx;
+	}
+
+	.login_top {
+		font-size: 24rpx;
+		color: #adafb3;
+	}
+
+	.input_botom {
+		border-bottom: 1px solid #f4f4f4;
+	}
+
+	.bottom_nav {
+		width: 100%;
+		position: absolute;
+		bottom: 30rpx;
+		padding-bottom: env(safe-area-inset-bottom);
+	}
+
+	.bottom-box {
+		width: 70%;
+		margin: 0 auto;
+	}
+
+	.other_tit {
+		height: 1rpx;
+		background-color: #CACACA;
+		width: 100%;
+		line-height: 1rpx;
+		text-align: center;
+	}
+
+	.weixin_box {
+		background-color: #04BE01;
+		border-radius: 50%;
+		width: 80rpx;
+		height: 80rpx;
+		line-height: 80rpx;
+		text-align: center;
+	}
+
+	.weixin_box .icon-weixin {
+		font-size: 40rpx;
+		color: #FFFFFF;
+	}
+
+	.agreement {
+		border-radius: 50%;
+		width: 28rpx;
+		height: 28rpx;
+		border: 2rpx solid;
+		@include border_color('border_color');
+		background: #fff;
+		position: relative;
+		margin-right: 10rpx;
+		box-sizing: border-box;
+	}
+
+	.agreement.active::after {
+		content: '';
+		width: 16rpx;
+		height: 16rpx;
+		// background-color: #EE1413;
+		@include background_color('background_color');
+		border-radius: 50%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		margin: auto;
+	}
+
+	.ios-login {
+		width: 420rpx;
+		height: 100rpx;
+		margin: 20rpx auto;
+	}
+	.skip{
+		position: absolute;
+		top: 80rpx;
+		right: 30rpx;
+		font-size: 28rpx;
+		color: #999999;
+	}
+</style>
