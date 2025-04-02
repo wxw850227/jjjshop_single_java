@@ -1,8 +1,6 @@
 ![输入图片说明](https://www.jjjshop.net/gitee/all/jdsh01.png)
 ### 三勾商城小程序、支持多端发布，一套代码发布到8个平台，面向开发，方便二次开发
 
- **[cloud版本]** 请移步：[https://gitee.com/victor123/jjjshop-cloud](https://gitee.com/victor123/jjjshop-cloud)
-
 ### 项目介绍
 
 
