@@ -20,6 +20,7 @@ import net.jjjshop.common.util.ProductUtils;
 import net.jjjshop.common.util.UploadFileUtils;
 import net.jjjshop.common.util.UserUtils;
 import net.jjjshop.common.vo.product.ProductSkuVo;
+import net.jjjshop.framework.common.exception.BusinessException;
 import net.jjjshop.framework.common.service.impl.BaseServiceImpl;
 import net.jjjshop.framework.core.pagination.PageInfo;
 import net.jjjshop.framework.core.pagination.Paging;
@@ -285,7 +286,7 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
             ProductSku sku = JSONObject.toJavaObject(specList.getJSONObject(i).getJSONObject("specForm"), ProductSku.class);
             sku.setSpecSkuId(specList.getJSONObject(i).getString("specSkuId"));
             sku.setProductId(productParam.getProductId());
-            if(specList.getJSONObject(i).getInteger("productSkuId") > 0){
+            if(specList.getJSONObject(i).getInteger("productSkuId") > 0 && !("copy".equals(productParam.getScene()))){
                 for(int j=0;j<skuList.size();j++){
                     if(skuList.get(j).getProductSkuId().intValue() == specList.getJSONObject(i).getInteger("productSkuId").intValue()){
                         skuList.remove(j);
@@ -301,16 +302,21 @@ public class ProductServiceImpl extends BaseServiceImpl<ProductMapper, Product> 
         if(updateData.size() > 0){
             productSkuService.updateBatchById(updateData);
         }
-        if(saveData.size() > 0){
-            productSkuService.saveBatch(saveData);
-        }
-        // 删除
+        // 先删除
         if(CollectionUtils.isNotEmpty(skuList)){
             List<Integer> idList = new ArrayList<>();
             skuList.forEach(item->{
                 idList.add(item.getProductSkuId());
             });
             productSkuService.remove(new LambdaQueryWrapper<ProductSku>().in(ProductSku::getProductSkuId, idList));
+        }
+        if(saveData.size() > 0){
+            try {
+                productSkuService.saveBatch(saveData);
+            } catch (Exception e) {
+                log.error("规格值不能重复: " + e);
+                throw new BusinessException("规格值不能重复");
+            }
         }
     }
 

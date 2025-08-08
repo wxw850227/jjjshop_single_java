@@ -5303,7 +5303,6 @@ vjs.Html5.isSupported = function(){
 
 vjs.Html5.canPlaySource = function(srcObj){
   // IE9 on Windows 7 without MediaPlayer throws an error here
-  // https://github.com/videojs/video.js/issues/519
   try {
     return !!vjs.TEST_VID.canPlayType(srcObj.type);
   } catch(e) {
@@ -5357,7 +5356,6 @@ if (vjs.IS_OLD_ANDROID) {
 }
 /**
  * @fileoverview VideoJS-SWF - Custom Flash Player with HTML5-ish API
- * https://github.com/zencoder/video-js-swf
  * Not using setupTriggers. Using global onEvent func to distribute events
  */
 
@@ -6967,7 +6965,6 @@ vjs.obj.merge(vjs.ControlBar.prototype.options_['children'], {
 /**
  * Javascript JSON implementation
  * (Parse Method Only)
- * https://github.com/douglascrockford/JSON-js/blob/master/json2.js
  * Only using for parse method when parsing data-setup attribute JSON.
  * @suppress {undefinedVars}
  * @namespace

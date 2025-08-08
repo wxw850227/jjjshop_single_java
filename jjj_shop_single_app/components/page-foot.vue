@@ -17,7 +17,7 @@
 		methods: {
 			submit() {
 				uni.showModal({
-					content:"hello uni-app开源地址为https://github.com/dcloudio/uni-app/tree/master/examples，请在这个开源项目上贡献你的代码",
+					content:"hello uni-app",
 					showCancel:false
 				})
 			}

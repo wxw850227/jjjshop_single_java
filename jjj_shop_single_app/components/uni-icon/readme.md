@@ -19,7 +19,6 @@ export default {
 <uni-icon type="contact" size="30"></uni-icon>
 ```
 
-实际效果参考：[https://github.com/dcloudio/uni-ui](https://github.com/dcloudio/uni-ui)
 
 **Icon 属性说明：**
 

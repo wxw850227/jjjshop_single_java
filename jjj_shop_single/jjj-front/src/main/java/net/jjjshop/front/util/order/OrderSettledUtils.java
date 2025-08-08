@@ -420,7 +420,7 @@ public class OrderSettledUtils {
             }else{
                 UserGrade grade = userGradeService.getById(user.getGradeId());
                 // 折扣比例
-                discountRatio = BigDecimal.valueOf(grade.getEquity() * 0.01);
+                discountRatio = BigDecimal.valueOf(grade.getEquity() * 0.01).setScale(2, RoundingMode.DOWN);
             }
             BigDecimal gradeTotalPrice = null;
             BigDecimal gradeProductPrice = null;

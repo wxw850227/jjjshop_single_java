@@ -3447,7 +3447,7 @@ typeof(exports) != 'undefined' ? exports.SyntaxHighlighter = SyntaxHighlighter :
 		var fonts =		'[mM]onospace [tT]ahoma [vV]erdana [aA]rial [hH]elvetica [sS]ans-serif [sS]erif [cC]ourier mono sans serif';
 		
 		var statements		= '!important !default';
-		var preprocessor	= '@import @extend @debug @warn @if @for @while @mixin @include';
+		var preprocessor	= '@use @extend @debug @warn @if @for @while @mixin @include';
 		
 		var r = SyntaxHighlighter.regexLib;
 		

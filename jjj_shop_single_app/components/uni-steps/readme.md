@@ -38,7 +38,6 @@ export default {
 </uni-steps>
 ```
 
-实际效果参考：[https://github.com/dcloudio/uni-ui](https://github.com/dcloudio/uni-ui)
 
 **属性说明：**
 

@@ -20,7 +20,6 @@ import java.util.Date;
 
 /**
  * JWT工具类
- * https://github.com/auth0/java-jwt
  **/
 @Slf4j
 @Component

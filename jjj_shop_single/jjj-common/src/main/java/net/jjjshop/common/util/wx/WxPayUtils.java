@@ -57,8 +57,18 @@ public class WxPayUtils {
         payConfig.setSubAppId(null);
         payConfig.setSubMchId(null);
         payConfig.setKeyContent(app.getP12());
-        payConfig.setPrivateKeyContent(app.getKeyPem().getBytes());
-        payConfig.setPrivateCertContent(app.getCertPem().getBytes());
+        payConfig.setPrivateKeyContent(app.getKeyPem()==null?null : app.getKeyPem().getBytes());
+        payConfig.setPrivateCertContent(app.getCertPem()==null?null : app.getCertPem().getBytes());
+        //支付验签类型,0证书,1公钥
+        if(app.getWxSignType() != null && app.getWxSignType() == 1){
+            //公钥ID
+            payConfig.setPublicKeyId(StringUtils.trimToNull(app.getWechatpaySerial()));
+            if(StringUtils.isBlank(app.getPubKeyPem())){
+                throw new BusinessException("支付公钥pub_key不能为空");
+            }
+            //pub_key.pem证书文件内容的字节数组
+            payConfig.setPublicKeyContent(app.getPubKeyPem().getBytes());
+        }
         // 可以指定是否使用沙箱环境
         payConfig.setUseSandboxEnv(false);
         if ("mp".equals(paySource) || "payH5".equals(paySource)) {

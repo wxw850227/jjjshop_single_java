@@ -21,31 +21,47 @@
         </div>
       </el-form-item>
       <div class="common-form">微信支付设置</div>
-
       <el-form-item label="证书类型">
         <div>
           <el-radio v-model="form.wxPayKind" :label="3">V3</el-radio>
         </div>
       </el-form-item>
-
       <el-form-item label="微信支付商户号 MCHID">
         <el-input v-model="form.mchid" class="max-w460"></el-input>
       </el-form-item>
       <el-form-item label="微信支付密钥 APIKEY ">
         <el-input v-model="form.apikey" class="max-w460"></el-input>
       </el-form-item>
-      <el-form-item label="V3证书序列号serial" v-if="form.wxPayKind == 3">
+      <el-form-item label="微信支付验签类型">
+        <div>
+          <el-radio v-model="form.wxSignType" :label="1">公钥</el-radio>
+        </div>
+      </el-form-item>
+      <el-form-item label="公钥ID">
         <el-input
-          type="textarea"
           :rows="4"
-          placeholder="微信商户平台-API安全-V3平台证书-序列号,将序列号的全部内容复制进来"
+          placeholder="微信商户平台-账号中心-API安全-微信支付公钥-公钥ID"
           v-model="form.wechatpaySerial"
           class="max-w460"
         ></el-input>
         <div class="tips">
-          微信商户平台-API安全-V3平台证书-序列号,将序列号的全部内容复制进来
+          微信商户平台-账号中心-API安全-微信支付公钥-公钥ID
         </div>
       </el-form-item>
+      <template v-if="form.wxSignType === 1">
+        <el-form-item label="支付公钥pub_key.pem">
+          <el-input
+            type="textarea"
+            :rows="4"
+            v-model="form.pubKeyPem"
+            placeholder="使用文本编辑器打开pub_key.pem文件，将文件的全部内容复制进来"
+            class="max-w460"
+          ></el-input>
+          <div class="tips">
+            使用文本编辑器打开pub_key.pem文件，将文件的全部内容复制进来
+          </div>
+        </el-form-item>
+      </template>
       <el-form-item label="apiclient_cert.pem" v-if="form.wxPayKind == 3">
         <el-input
           type="textarea"
@@ -97,6 +113,8 @@ export default {
         certPem: "",
         keyPem: "",
         wechatpaySerial: "",
+        wxSignType: 1,
+        pubKeyPem: "",
       },
       app: {},
       payType: [],

@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 /**
@@ -97,11 +98,11 @@ public class UserCartServiceImpl extends BaseServiceImpl<UserCartMapper, UserCar
                 discountRatio = BigDecimal.valueOf(aloneGradeEquity.getDoubleValue("" + user.getGradeId())).divide(new BigDecimal(100));
             } else {
                 aloneGradeType = 20;
-                discountRatio = BigDecimal.valueOf(aloneGradeEquity.getDoubleValue("" + user.getGradeId())).divide(vo.getProductPrice(),2, BigDecimal.ROUND_DOWN);
+                discountRatio = BigDecimal.valueOf(aloneGradeEquity.getDoubleValue("" + user.getGradeId())).divide(vo.getProductPrice(),2, RoundingMode.DOWN);
             }
         } else {
             // 折扣比例
-            discountRatio = new BigDecimal(grade.getEquity()).divide(new BigDecimal(100));
+            discountRatio = new BigDecimal(grade.getEquity()).divide(new BigDecimal(100),2, RoundingMode.DOWN);
         }
         if (discountRatio.compareTo(BigDecimal.ONE) < 0) {
             // 标记参与会员折扣

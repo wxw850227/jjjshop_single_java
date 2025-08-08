@@ -28,9 +28,9 @@ export default defineComponent({
 });
 </script>
 <style lang="scss">
-	@import '@/assets/font/iconfont.css';
-	// @import '@/assets/font/myIcon.css';
-	@import '@/styles/diy.scss';
+	@use '@/assets/font/iconfont.css';
+	// @use '@/assets/font/myIcon.css';
+	@use '@/styles/diy.scss';
 
 	* {
 		margin: 0;

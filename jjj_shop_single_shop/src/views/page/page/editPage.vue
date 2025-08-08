@@ -127,5 +127,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import '@/styles/diy.scss';
+@use '@/styles/diy.scss';
 </style>

@@ -71,6 +71,12 @@ public class App implements Serializable {
     @ApiModelProperty("证书文件key")
     private String keyPem;
 
+    @ApiModelProperty("微信支付验签类型,0证书,1公钥")
+    private Integer wxSignType;
+
+    @ApiModelProperty("微信支付公钥文件Key")
+    private String pubKeyPem ;
+
     @ApiModelProperty("微信平台证书序列号")
     private String wechatpaySerial;
 

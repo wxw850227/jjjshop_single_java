@@ -17,6 +17,12 @@ public class PayParam implements Serializable {
     @ApiModelProperty("支付类型，json格式")
     private JSONObject payType;
 
+    @ApiModelProperty("微信支付验签类型,0证书,1公钥")
+    private Integer wxSignType;
+
+    @ApiModelProperty("微信支付公钥文件Key")
+    private String pubKeyPem ;
+
     @ApiModelProperty("微信支付方式v2：2,v3：3")
     private Integer wxPayKind;
 

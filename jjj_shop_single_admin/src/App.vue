@@ -29,7 +29,7 @@
 	});
 </script>
 <style lang="scss">
-	@import './assets/font/iconfont.css';
+	@use './assets/font/iconfont.css';
 	* {
 		margin: 0;
 		padding: 0;
